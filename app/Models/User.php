@@ -19,7 +19,7 @@ use App\Models\Workspace;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, Notifiable, HasFactory;
 
     public function workspaces() : BelongsToMany {
         return $this->belongsToMany(Workspace::class, 'memberships')->withPivot('membership_role')->withTimestamps();

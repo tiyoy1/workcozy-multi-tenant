@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('workspace_id')->constrained()->cascadeOnDelete()->index();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('workspace_id')->constrained()->cascadeOnDelete()->index();
             $table->string('title');
             $table->text('body')->nullable();
             $table->timestamps();

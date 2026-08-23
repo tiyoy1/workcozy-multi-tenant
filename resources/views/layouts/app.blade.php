@@ -15,9 +15,11 @@
             <h1 class="text-xl font-bold text-gray-900">
                 🚀 {{ $workspace->slug ?? 'My Workspace' }}
             </h1>
+            @isset($workspace)
             <a href="{{ route('posts.create', $workspace) }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
                 + New Post
             </a>
+            @endisset
         </div>
     </nav>
 
