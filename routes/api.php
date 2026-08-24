@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\EnsureUserBelongsToWorkspace;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\WorkspaceController;
+use App\Http\Resources\PostResource;
+use App\Models\Post;
 
 Route::get('/user', function (Request $request) {
     return $request->user();

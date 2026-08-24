@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PostResource;
+use App\Http\Resources\WorkspaceResource;
 use App\Models\Post;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
@@ -14,21 +16,12 @@ class PostController extends Controller
      */
     public function index(Workspace $workspace)
     {
-        // return view('dashboard')
-        $posts = $workspace->posts()->latest()->get();
-
-        // return view('posts.index', [
-        //     'workspace' => $workspace,
-        //     'posts' => $posts
-        // ]);
+        $posts = $workspace->posts()->with('user')->latest()->get();
 
         return response()->json([
-            'workspace' => $workspace,
-            'posts' => $posts,
+            'workspace' => new WorkspaceResource($workspace),
+            'posts' => PostResource::collection($posts),
         ], 200);
-
-        // $posts = Post::all();
-        // return view('posts.index', compact('posts'));
     }
 
     /**
@@ -36,9 +29,7 @@ class PostController extends Controller
      */
     public function create(Workspace $workspace)
     {
-        return response()->json([
-            'workspace' => $workspace
-        ], 200);
+        //
     }
 
     /**
@@ -46,12 +37,7 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request, Workspace $workspace) 
     {
-        $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
-            'body' => 'nullable|string',
-        ]);
-
-        // dd($validatedData);
+        $validatedData = $request->validated();
 
         $post = Post::create([
             'title' => $validatedData['title'],
@@ -60,7 +46,7 @@ class PostController extends Controller
             'user_id' => $request->user()->id,
         ]);
 
-        return response()->json($post, 201);
+        return new PostResource($post);
     }
 
     /**
@@ -69,8 +55,8 @@ class PostController extends Controller
     public function show(Workspace $workspace, Post $post)
     {
         return response()->json([
-            'workspace' => $workspace,
-            'post' => $post,
+            'workspace' => new WorkspaceResource($workspace),
+            'post' => new PostResource($post),
         ], 200);
     }
 
@@ -78,14 +64,8 @@ class PostController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(Workspace $workspace, Post $post)
-    {
-        // dd($post);
-        
-        return response()->json([
-            'post' => $post,
-            'workspace' => $workspace,
-        ], 200); //ga perlu compact euy karena udah bikin array sendiri anjay
-        
+    {     
+        //
     }
 
     /**
@@ -93,19 +73,12 @@ class PostController extends Controller
      */
     public function update(UpdatePostRequest $request, Workspace $workspace, Post $post)
     {
-        // dd($post); bro im actually crackedd!!! 
     
-        $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
-            'body' => 'nullable|string',
-        ]);
-
-        // dd($validatedData);
+        $validatedData = $request->validated();
 
         $post->update($validatedData);
 
-        // $post->update($validatedData);
-        return response()->json($post, 200);
+        return new PostResource($post);
     }
 
     /**
@@ -113,11 +86,9 @@ class PostController extends Controller
      */
     public function destroy(Workspace $workspace, Post $post)
     {
-        // dd($post); //berarti error terjadi sebelum function ini kepanggil wey
-        // $post = Post::findOrFail($id);
         $post->delete();
         return response()->json([
             'workspace' => $workspace
-        ], 201);
+        ], 200);
     }
 }
